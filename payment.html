@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Book Store</title>
+    <link rel="icon" href="Images/books.png" type="image/x-icon">
+    <link rel="shortcut icon" href="Images/books.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        :root {
+            --background: #F2EFE7;
+            --dark-text: #213448;
+            --accent: #547792;
+            --light-text: #94B4C1;
+            --footer-primary: #006A71;
+            --footer-accent: #48A6A7;
+            --footer-light: #9ACBD0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Kugile', Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+        }
+
+        .header {
+            background-color: var(--background);
+            padding: 20px 50px;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .logo img {
+            height: 50px;
+            width: auto;
+        }
+
+        .logo span {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--dark-text);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark-text);
+            font-size: 16px;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        .cart-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 18px;
+            color: #000;
+            cursor: pointer;
+        }
+
+        .cart-count {
+            background-color: var(--dark-text);
+            color: white;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            font-size: 14px;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            padding-top: 120px;
+        }
+
+        h2, h3 {
+            font-weight: 700;
+            color: var(--dark-text);
+            margin-bottom: 1rem;
+        }
+
+        .cart-items, .payment-details {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .cart-items.empty {
+            text-align: center;
+            color: var(--dark-text);
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            padding: 0.5rem 0;
+        }
+
+        .cart-item img {
+            width: 4rem;
+            height: 4rem;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-right: 1rem;
+        }
+
+        .cart-item h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--dark-text);
+        }
+
+        .cart-item p {
+            font-size: 0.875rem;
+            color: var(--light-text);
+        }
+
+        .remove-item {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: color 0.3s ease;
+        }
+
+        .remove-item:hover {
+            color: #6B8EA8;
+        }
+
+        .payment-details input,
+        .payment-details textarea {
+            background-color: #eee;
+            border: none;
+            margin: 0.5rem 0;
+            padding: 10px 15px;
+            font-size: 13px;
+            border-radius: 8px;
+            width: 100%;
+            outline: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .payment-details input:focus,
+        .payment-details textarea:focus {
+            background-color: #ddd;
+        }
+
+        .payment-details label {
+            font-size: 0.875rem;
+            color: var(--dark-text);
+            margin-bottom: 0.25rem;
+            display: block;
+        }
+
+        .payment-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .pay-btn {
+            background-color: var(--accent);
+            color: white;
+            font-size: 12px;
+            padding: 10px 45px;
+            border: 1px solid transparent;
+            border-radius: 8px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            width: 100%;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-top: 1rem;
+        }
+
+        .pay-btn:hover {
+            background-color: #6B8EA8;
+            transform: scale(1.05);
+        }
+
+        .total {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin: 1rem 0;
+        }
+
+        .footer {
+            background-color: var(--background);
+            padding: 40px 20px;
+            color: var(--footer-primary);
+            border-top: 1px solid var(--footer-light);
+        }
+
+        .footer-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-section {
+            flex: 1 1 200px;
+            min-width: 150px;
+        }
+
+        .footer-section h3 {
+            font-size: 18px;
+            color: var(--footer-primary);
+            margin-bottom: 15px;
+        }
+
+        .footer-section p,
+        .footer-section a {
+            font-size: 14px;
+            color: var(--footer-accent);
+            text-decoration: none;
+            line-height: 1.8;
+        }
+
+        .footer-section a:hover {
+            color: var(--footer-primary);
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 15px;
+        }
+
+        .footer-social a {
+            font-size: 20px;
+            color: var(--footer-accent);
+            transition: color 0.3s;
+        }
+
+        .footer-social a:hover {
+            color: var(--footer-primary);
+        }
+
+        .footer-newsletter form {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .footer-newsletter input {
+            padding: 10px;
+            border: 1px solid var(--footer-light);
+            border-radius: 5px;
+            outline: none;
+            flex: 1;
+            font-size: 14px;
+        }
+
+        .footer-newsletter button {
+            padding: 10px 20px;
+            background-color: var(--footer-primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .footer-newsletter button:hover {
+            background-color: var(--footer-accent);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--footer-light);
+            font-size: 14px;
+            color: var(--footer-light);
+        }
+
+        @media (max-width: 768px) {
+            .top-bar {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .nav-links {
+                justify-content: center;
+                width: 100%;
+            }
+
+            .payment-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .main-container {
+                padding-top: 150px;
+            }
+
+            .footer-container {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .footer-section {
+                flex: 1 1 100%;
+            }
+
+            .footer-social {
+                justify-content: center;
+            }
+
+            .footer-newsletter form {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .footer-newsletter input,
+            .footer-newsletter button {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .footer {
+                padding: 20px;
+            }
+
+            .footer-section h3 {
+                font-size: 16px;
+            }
+
+            .footer-section p,
+            .footer-section a {
+                font-size: 12px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+
+            h3 {
+                font-size: 18px;
+            }
+
+            .cart-item h4 {
+                font-size: 0.875rem;
+            }
+
+            .cart-item p {
+                font-size: 0.75rem;
+            }
+
+            .remove-item {
+                font-size: 0.75rem;
+            }
+
+            .payment-details label {
+                font-size: 0.75rem;
+            }
+
+            .payment-details input,
+            .payment-details textarea {
+                font-size: 12px;
+            }
+
+            .pay-btn {
+                font-size: 11px;
+                padding: 8px 40px;
+            }
+
+            .total {
+                font-size: 1rem;
+            }
+
+            .main-container {
+                padding-top: 170px;
+            }
+
+            .logo span {
+                font-size: 20px;
+            }
+
+            .nav-links a {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="top-bar">
+            <div class="logo">
+                <img src="Images/library.png" alt="logo">
+                <span>Book Store</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">Back to Store</a>
+                <div class="cart-section">
+                    <i class="fas fa-shopping-cart"></i>
+                    <div class="cart-count" id="cart-count">0</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <h2>Your Cart</h2>
+        <div id="cart-items" class="cart-items"></div>
+        
+        <div class="payment-details">
+            <h3>Payment Details</h3>
+            <div class="payment-grid">
+                <div>
+                    <label for="card-number">Card Number</label>
+                    <input id="card-number" type="text" placeholder="1234 5678 9012 3456" required>
+                </div>
+                <div>
+                    <label for="card-holder">Card Holder Name</label>
+                    <input id="card-holder" type="text" placeholder="John Doe" required>
+                </div>
+                <div>
+                    <label for="expiry">Expiry Date</label>
+                    <input id="expiry" type="text" placeholder="MM/YY" required>
+                </div>
+                <div>
+                    <label for="cvv">CVV</label>
+                    <input id="cvv" type="text" placeholder="123" required>
+                </div>
+            </div>
+            <div class="mt-4">
+                <label for="address">Billing Address</label>
+                <textarea id="address" placeholder="123 Main St, City, Country" required></textarea>
+            </div>
+            <div class="total">
+                <p>Total: $<span id="cart-total">0.00</span></p>
+            </div>
+            <button id="pay-btn" class="pay-btn">Pay Now</button>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-container">
+          <div class="footer-section footer-about">
+            <h3>Book Store</h3>
+            <p>Your haven for books and stories. Explore our curated collection and join our community of readers.</p>
+          </div>
+          <div class="footer-section footer-links">
+            <h3>Explore</h3>
+            <ul>
+              <li><a href="">Home</a></li>
+              <li><a href="books.html">Books</a></li>
+            </ul>
+          </div>
+          <div class="footer-section footer-contact">
+            <h3>Contact Us</h3>
+            <p>Email: info@bookstore.com</p>
+            <p>Phone: +201060697120</p>
+            <p>Address: 123 Book St, Literature City</p>
+          </div>
+          <div class="footer-section footer-social">
+            <h3>Developed By</h3>
+            <div class="social-icons">
+              <a href="Portfoliom.html">Mansour</a>
+              <a href="#">Elkaw</a>
+              <a href="#">Shaimaa</a>
+              <a href="#">Jana</a><br>
+              <a href="#">Ethar</a>
+              <a href="#">Rawan</a>
+            </div>
+          </div>
+          <div class="footer-section footer-newsletter">
+            <h3>Newsletter</h3>
+            <p>Stay updated with our latest books and events.</p>
+            <form>
+              <input type="email" placeholder="Enter your email" required>
+              <button type="submit">Subscribe</button>
+            </form>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>© 2025 Book Store. All rights reserved.</p>
+        </div>
+      </footer>
+
+    <script>
+        const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+        function renderCart() {
+            const cartItems = document.getElementById("cart-items");
+            const cartTotal = document.getElementById("cart-total");
+            const cartCount = document.getElementById("cart-count");
+            cartItems.innerHTML = "";
+
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<p class="empty">Your cart is empty.</p>';
+                cartTotal.textContent = "0.00";
+                cartCount.textContent = "0";
+                return;
+            }
+
+            cart.forEach((book, index) => {
+                const item = document.createElement("div");
+                item.className = "cart-item";
+                item.innerHTML = `
+                    <div class="flex items-center">
+                        <img src="${book.image}" alt="${book.title}">
+                        <div>
+                            <h4>${book.title}</h4>
+                            <p>$${book.price.toFixed(2)}</p>
+                        </div>
+                    </div>
+                    <a href="#" class="remove-item" data-index="${index}">Remove</a>
+                `;
+                cartItems.appendChild(item);
+            });
+
+            const total = cart.reduce((sum, book) => sum + book.price, 0);
+            cartTotal.textContent = total.toFixed(2);
+            cartCount.textContent = cart.length;
+        }
+
+        document.addEventListener("click", (e) => {
+            if (e.target.classList.contains("remove-item")) {
+                e.preventDefault();
+                const index = parseInt(e.target.dataset.index);
+                cart.splice(index, 1);
+                localStorage.setItem("cart", JSON.stringify(cart));
+                renderCart();
+            }
+        });
+
+        document.getElementById("pay-btn").addEventListener("click", () => {
+            const cardNumber = document.getElementById("card-number").value;
+            const cardHolder = document.getElementById("card-holder").value;
+            const expiry = document.getElementById("expiry").value;
+            const cvv = document.getElementById("cvv").value;
+            const address = document.getElementById("address").value;
+
+            if (cardNumber && cardHolder && expiry && cvv && address) {
+                alert("Payment successful! Thank you for your purchase.");
+                localStorage.removeItem("cart");
+                window.location.href = "index.html";
+            } else {
+                alert("Please fill in all payment details.");
+            }
+        });
+
+        document.querySelector(".cart-section").addEventListener("click", () => {
+            window.location.href = "payment.html";
+        });
+
+        renderCart();
+    </script>
+</body>
+</html>
